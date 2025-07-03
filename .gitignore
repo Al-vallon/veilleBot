@@ -1,0 +1,10 @@
+// This is a sample .gitignore file for a Node.js project
+# Node modules
+node_modules/
+# Logs
+logs/
+# Environment variables
+.env
+# Ignorer les fichiers système spécifiques
+.DS_Store
+Thumbs.db
