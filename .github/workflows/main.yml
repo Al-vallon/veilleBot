@@ -1,2 +1,14 @@
-# Ping VeilleBot sur Render toutes les 10 minutes pour éviter la mise en veille
-*/10 * * * * curl -s https://veillebot.onrender.com/health >/dev/null 2>&1
+name: Keep Render Bot Awake
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # toutes les 10 minutes
+  workflow_dispatch:        # permet de lancer manuellement depuis GitHub
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Curl Render Bot
+        run: curl -s https://veillebot.onrender.com/health
