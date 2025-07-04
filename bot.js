@@ -4,14 +4,27 @@ const { createDiscordClient } = require("./src/discordClient");
 const NewsManager = require("./src/newsManager");
 const keepAlive = require("./src/keepalive");
 
-// Vérification des variables d'environnement
-if (!process.env.DISCORD_TOKEN) {
-    console.error("❌ DISCORD_TOKEN manquant dans le fichier .env");
+// Charger la configuration
+const config = require("./config.json");
+
+// Fonction pour obtenir une valeur de config (env en priorité, puis config.json)
+function getConfigValue(envKey, configKey) {
+    return process.env[envKey] || config[configKey];
+}
+
+// Vérification des variables de configuration
+const token = getConfigValue('DISCORD_TOKEN', 'token');
+const channelId = getConfigValue('DISCORD_CHANNEL_ID', 'channelId');
+
+if (!token || token === "DISCORD_TOKEN") {
+    console.error("❌ Token Discord manquant");
+    console.error("Ajoutez DISCORD_TOKEN dans le fichier .env ou remplacez 'DISCORD_TOKEN' dans config.json");
     process.exit(1);
 }
 
-if (!process.env.DISCORD_CHANNEL_ID) {
-    console.error("❌ DISCORD_CHANNEL_ID manquant dans le fichier .env");
+if (!channelId || channelId === "DISCORD_CHANNEL_ID") {
+    console.error("❌ DISCORD_CHANNEL_ID manquant");
+    console.error("Ajoutez DISCORD_CHANNEL_ID dans le fichier .env ou ajoutez 'channelId' dans config.json");
     process.exit(1);
 }
 
@@ -26,7 +39,7 @@ keepAlive();
 // Fonction pour démarrer la boucle de vérification des news
 async function startNewsLoop() {
     try {
-        newsChannel = await client.channels.fetch(process.env.DISCORD_CHANNEL_ID);
+        newsChannel = await client.channels.fetch(channelId);
         console.log(`📢 Canal de news configuré: #${newsChannel.name}`);
         
         // Première vérification immédiate
@@ -107,4 +120,4 @@ process.on('uncaughtException', (error) => {
 
 // Connexion du bot
 console.log("🔌 Connexion au bot Discord...");
-client.login(process.env.DISCORD_TOKEN);
+client.login(token);

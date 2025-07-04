@@ -5,8 +5,9 @@ function createDiscordClient() {
     const client = new Client({
         intents: [
             GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildMessages,
-            GatewayIntentBits.MessageContent
+            GatewayIntentBits.GuildMessages
+            // Note: MessageContent intent removed as it requires verification for bots in 100+ servers
+            // Add it back if needed and verify your bot in Discord Developer Portal
         ]
     });
 

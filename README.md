@@ -2,7 +2,32 @@
 
 Bot Discord pour la veille technologique automatisée avec surveillance RSS.
 
-## 📁 Structure du projet
+## � Configuration rapide
+
+### 1. Configuration Discord
+1. Allez sur https://discord.com/developers/applications
+2. Créez une nouvelle application ou sélectionnez une existante
+3. Dans l'onglet "Bot":
+   - Copiez le Token et remplacez `DISCORD_TOKEN` dans `config.json`
+   - Activez les intents suivants :
+     - ✅ **Presence Intent** (optionnel)
+     - ✅ **Server Members Intent** (optionnel)
+     - ❌ **Message Content Intent** (laissez désactivé sauf si nécessaire)
+
+### 2. Configuration des IDs Discord
+Dans `config.json`, remplacez :
+- `DISCORD_CLIENT_ID` : ID de votre application (onglet "General Information")
+- `DISCORD_GUILD_ID` : ID de votre serveur Discord (clic droit sur le serveur > Copier l'ID)
+- `DISCORD_CHANNEL_ID` : ID du canal où envoyer les news (clic droit sur le canal > Copier l'ID)
+
+### 3. Installation et démarrage
+```bash
+npm install
+node deploy-commands.js  # Enregistre les commandes slash
+npm start               # Démarre le bot
+```
+
+## �📁 Structure du projet
 
 ```
 veilleBot/

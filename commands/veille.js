@@ -1,6 +1,6 @@
 // commands/veille.js
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const fetchNews = require('../rss');
+const NewsManager = require('../src/newsManager');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,7 +10,8 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply();
 
-        const news = await fetchNews();
+        const newsManager = new NewsManager();
+        const news = await newsManager.fetchNews();
 
         if (news.length === 0) {
         return interaction.editReply("📰 Rien de nouveau pour le moment !");

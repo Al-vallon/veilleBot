@@ -1,7 +1,13 @@
 // deploy-commands.js
+require('dotenv').config();
 const { REST, Routes } = require('discord.js');
-const { clientId, guildId, token } = require('./config.json');
+const config = require('./config.json');
 const fs = require('fs');
+
+// Utiliser les variables d'environnement en priorité, puis config.json
+const clientId = process.env.DISCORD_CLIENT_ID || config.clientId;
+const guildId = process.env.DISCORD_GUILD_ID || config.guildId;
+const token = process.env.DISCORD_TOKEN || config.token;
 
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
