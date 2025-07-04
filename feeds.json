@@ -5,13 +5,58 @@
         "keywords": ["intelligence artificielle", "IA", "machine learning"]
     },
     {
-        "name": "Dev.to - JS",
+        "name": "DEV Community (Dev.to)",
         "url": "https://dev.to/feed",
-        "keywords": ["javascript", "node", "web"]
+        "keywords": ["javascript", "web", "development"]
     },
     {
         "name": "Hacker News",
         "url": "https://hnrss.org/frontpage",
-        "keywords": ["AI", "OpenAI", "cybersecurity"]
+        "keywords": ["tech news", "startups", "cybersecurity"]
+    },
+    {
+        "name": "JavaScript Weekly",
+        "url": "https://javascriptweekly.com/rss/",
+        "keywords": ["javascript", "web", "newsletter"]
+    },
+    {
+        "name": "This Week In React",
+        "url": "https://thisweekinreact.com/newsletter/rss.xml",
+        "keywords": ["react", "javascript", "frontend"]
+    },
+    {
+        "name": "React Status",
+        "url": "https://react.statuscode.com/rss/",
+        "keywords": ["react", "javascript", "tutorials"]
+    },
+    {
+        "name": "Angular Training Blog",
+        "url": "https://blog.angulartraining.com/feed",
+        "keywords": ["angular", "typescript", "frontend"]
+    },
+    {
+        "name": "Real Python",
+        "url": "https://realpython.com/atom.xml",
+        "keywords": ["python", "programming", "tutorials"]
+    },
+    {
+        "name": "Data Center Knowledge",
+        "url": "https://www.datacenterknowledge.com/feed/",
+        "keywords": ["data center", "infrastructure", "cloud"]
+    },
+    {
+        "name": "Radio DevOps",
+        "url": "https://feeds.acast.com/public/shows/radio-devops",
+        "keywords": ["devops", "cloud", "infrastructure"]
+    },
+    {
+        "name": "Traversy Media (YouTube)",
+        "url": "https://www.youtube.com/user/TechGuyWeb",
+        "keywords": ["web development", "javascript", "tutorials"]
+    },
+    {
+        "name": "The Net Ninja (YouTube)",
+        "url": "https://www.youtube.com/channel/UCW5YeuERMmlnqo4oq8vwUpg",
+        "keywords": ["web development", "javascript", "react", "vuejs"]
     }
 ]
