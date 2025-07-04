@@ -7,7 +7,37 @@ class NewsManager {
         this.parser = new Parser();
         this.lastTitles = {};
         this.feedsPath = path.join(__dirname, "../feeds.json");
+        this.configPath = path.join(__dirname, "../bot-config.json");
+        this.startupDate = this.getOrCreateStartupDate();
         this.loadFeeds();
+    }
+
+    getOrCreateStartupDate() {
+        try {
+            if (fs.existsSync(this.configPath)) {
+                const config = JSON.parse(fs.readFileSync(this.configPath, "utf-8"));
+                if (config.startupDate) {
+                    console.log(`📅 Date de démarrage du bot: ${new Date(config.startupDate).toLocaleString('fr-FR')}`);
+                    return new Date(config.startupDate);
+                }
+            }
+        } catch (error) {
+            console.warn('⚠️ Erreur lors de la lecture de la config:', error.message);
+        }
+
+        // Créer une nouvelle date de démarrage
+        const now = new Date();
+        const config = { startupDate: now.toISOString() };
+        
+        try {
+            fs.writeFileSync(this.configPath, JSON.stringify(config, null, 2));
+            console.log(`🆕 Première installation détectée - Date de démarrage: ${now.toLocaleString('fr-FR')}`);
+            console.log(`📝 Seuls les articles publiés après cette date seront notifiés`);
+        } catch (error) {
+            console.error('❌ Erreur lors de la sauvegarde de la config:', error.message);
+        }
+
+        return now;
     }
 
     loadFeeds() {
@@ -32,6 +62,27 @@ class NewsManager {
         );
     }
 
+    isArticleRecent(item) {
+        if (!item.pubDate) {
+            // Si pas de date, on considère l'article comme récent
+            return true;
+        }
+
+        try {
+            const articleDate = new Date(item.pubDate);
+            const isRecent = articleDate >= this.startupDate;
+            
+            if (!isRecent) {
+                console.log(`⏭️ Article ignoré (trop ancien): ${item.title?.substring(0, 50)}... (${articleDate.toLocaleDateString('fr-FR')})`);
+            }
+            
+            return isRecent;
+        } catch (error) {
+            console.warn(`⚠️ Date invalide pour l'article: ${item.title?.substring(0, 50)}...`);
+            return true; // En cas d'erreur, on garde l'article
+        }
+    }
+
     async fetchNews() {
         const relevantNews = [];
 
@@ -44,6 +95,9 @@ class NewsManager {
                 for (const item of parsed.items) {
                     // Arrêter si on atteint le dernier titre connu
                     if (item.title === this.lastTitles[feed.url]) break;
+
+                    // Vérifier si l'article est récent (après la date de démarrage du bot)
+                    if (!this.isArticleRecent(item)) continue;
 
                     // Vérifier les mots-clés dans le titre et le contenu
                     const titleMatch = this.matchKeywords(item.title, feed.keywords);

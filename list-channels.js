@@ -1,6 +1,6 @@
 // list-channels.js - Script pour lister les canaux disponibles
 require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, ChannelType } = require('discord.js');
 const config = require('./config.json');
 
 const client = new Client({
@@ -16,26 +16,28 @@ client.once('ready', async () => {
     try {
         const guild = await client.guilds.fetch(guildId);
         console.log(`\n📋 Canaux disponibles sur "${guild.name}":`);
-        console.log('=' .repeat(50));
+        console.log('=' .repeat(60));
         
         const channels = await guild.channels.fetch();
         
         channels.forEach(channel => {
-            if (channel.type === 0) { // Canal textuel
-                console.log(`📝 ${channel.name}`);
+            if (channel.type === ChannelType.GuildText) { // Canal textuel uniquement
+                console.log(`📝 #${channel.name}`);
                 console.log(`   ID: ${channel.id}`);
-                console.log(`   Type: Canal textuel`);
+                console.log(`   Position: ${channel.position}`);
                 console.log('');
             }
         });
         
-        console.log('💡 Copiez l\'ID du canal souhaité et mettez-le dans DISCORD_CHANNEL_ID');
+        console.log('💡 Copiez l\'ID du canal souhaité et remplacez DISCORD_CHANNEL_ID dans .env');
+        console.log('\nExemple dans .env :');
+        console.log('DISCORD_CHANNEL_ID=1234567890123456789');
         
     } catch (error) {
         console.error('❌ Erreur:', error.message);
     }
     
-    client.destroy();
+    process.exit(0);
 });
 
 client.login(token);
