@@ -17,7 +17,7 @@ class NewsManager {
             if (fs.existsSync(this.configPath)) {
                 const config = JSON.parse(fs.readFileSync(this.configPath, "utf-8"));
                 if (config.startupDate) {
-                    console.log(`📅 Date de démarrage du bot: ${new Date(config.startupDate).toLocaleString('fr-FR')}`);
+                    console.log(`Date de démarrage du bot: ${new Date(config.startupDate).toLocaleString('fr-FR')}`);
                     return new Date(config.startupDate);
                 }
             }
@@ -32,9 +32,9 @@ class NewsManager {
         try {
             fs.writeFileSync(this.configPath, JSON.stringify(config, null, 2));
             console.log(`🆕 Première installation détectée - Date de démarrage: ${now.toLocaleString('fr-FR')}`);
-            console.log(`📝 Seuls les articles publiés après cette date seront notifiés`);
+            console.log(`Seuls les articles publiés après cette date seront notifiés`);
         } catch (error) {
-            console.error('❌ Erreur lors de la sauvegarde de la config:', error.message);
+            console.error('Erreur lors de la sauvegarde de la config:', error.message);
         }
 
         return now;
@@ -44,13 +44,13 @@ class NewsManager {
         try {
             if (fs.existsSync(this.feedsPath)) {
                 this.feeds = JSON.parse(fs.readFileSync(this.feedsPath, "utf-8"));
-                console.log(`📰 ${this.feeds.length} flux RSS chargé(s)`);
+                console.log(`${this.feeds.length} flux RSS chargé(s)`);
             } else {
                 console.warn('⚠️ Fichier feeds.json introuvable');
                 this.feeds = [];
             }
         } catch (error) {
-            console.error('❌ Erreur lors du chargement des flux RSS:', error.message);
+            console.error('Erreur lors du chargement des flux RSS:', error.message);
             this.feeds = [];
         }
     }
@@ -88,7 +88,7 @@ class NewsManager {
 
         for (const feed of this.feeds) {
             try {
-                console.log(`🔍 Vérification du flux: ${feed.name}`);
+                console.log(`Vérification du flux: ${feed.name}`);
                 const parsed = await this.parser.parseURL(feed.url);
                 const newItems = [];
 
@@ -121,11 +121,11 @@ class NewsManager {
                 relevantNews.push(...newItems.reverse());
                 
                 if (newItems.length > 0) {
-                    console.log(`✅ ${newItems.length} nouvel(s) article(s) trouvé(s) sur ${feed.name}`);
+                    console.log(`${newItems.length} nouvel(s) article(s) trouvé(s) sur ${feed.name}`);
                 }
 
             } catch (error) {
-                console.error(`❌ Erreur sur le flux ${feed.name}:`, error.message);
+                console.error(`Erreur sur le flux ${feed.name}:`, error.message);
             }
         }
 

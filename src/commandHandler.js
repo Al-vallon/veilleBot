@@ -15,19 +15,25 @@ function loadCommands(client) {
 
     const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
-    console.log(`📂 Chargement de ${commandFiles.length} commande(s)...`);
+    console.log(`Chargement de ${commandFiles.length} fichier(s) de commande(s)...`);
 
     for (const file of commandFiles) {
         try {
-            const command = require(path.join(commandsPath, file));
-            if (command.data && command.execute) {
-                client.commands.set(command.data.name, command);
-                console.log(`✅ Commande "${command.data.name}" chargée`);
-            } else {
-                console.log(`⚠️ La commande "${file}" n'a pas la structure requise`);
+            const commandsModule = require(path.join(commandsPath, file));
+            
+            // Gérer le nouveau format (array de commandes)
+            const commands = Array.isArray(commandsModule) ? commandsModule : [commandsModule];
+            
+            for (const command of commands) {
+                if (command.data && command.execute) {
+                    client.commands.set(command.data.name, command);
+                    console.log(`Commande "${command.data.name}" chargée`);
+                } else {
+                    console.log(`⚠️ Une commande dans "${file}" n'a pas la structure requise`);
+                }
             }
         } catch (error) {
-            console.error(`❌ Erreur lors du chargement de "${file}":`, error.message);
+            console.error(`Erreur lors du chargement de "${file}":`, error.message);
         }
     }
 }
@@ -38,15 +44,15 @@ function setupCommandHandler(client) {
 
         const command = interaction.client.commands.get(interaction.commandName);
         if (!command) {
-            console.log(`❌ Commande "${interaction.commandName}" introuvable`);
+            console.log(`Commande "${interaction.commandName}" introuvable`);
             return;
         }
 
         try {
-            console.log(`🎯 Exécution de la commande "${interaction.commandName}" par ${interaction.user.tag}`);
+            console.log(`Exécution de la commande "${interaction.commandName}" par ${interaction.user.tag}`);
             await command.execute(interaction);
         } catch (error) {
-            console.error(`❌ Erreur lors de l'exécution de "${interaction.commandName}":`, error);
+            console.error(`Erreur lors de l'exécution de "${interaction.commandName}":`, error);
             
             const errorMessage = 'Une erreur est survenue lors de l\'exécution de cette commande.';
             

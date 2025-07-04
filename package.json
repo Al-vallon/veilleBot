@@ -3,7 +3,13 @@
     "version": "1.0.0",
     "main": "bot.js",
     "scripts": {
-        "start": "node bot.js"
+        "start": "node bot.js",
+        "docker:build": "bash build-docker.sh",
+        "docker:publish": "bash publish-docker.sh",
+        "docker:run": "docker-compose up -d",
+        "docker:stop": "docker-compose down",
+        "docker:logs": "docker logs -f veillebot",
+        "docker:prod": "docker-compose -f docker-compose.prod.yml up -d"
     },
     "dependencies": {
         "discord.js": "^14.0.0",

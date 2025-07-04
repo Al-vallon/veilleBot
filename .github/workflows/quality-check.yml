@@ -1,0 +1,56 @@
+name: Code Quality Check
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Check for emojis in source code
+      run: |
+        echo "Checking for emojis in JavaScript files..."
+        if grep -r -P "[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}\x{1F1E0}-\x{1F1FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}]" --include="*.js" src/ commands/ *.js 2>/dev/null; then
+          echo "❌ Emojis found in source code!"
+          exit 1
+        else
+          echo "✅ No emojis found in source code"
+        fi
+
+    - name: Syntax check
+      run: |
+        echo "Checking JavaScript syntax..."
+        for file in bot.js deploy-commands.js src/*.js commands/*.js; do
+          if [ -f "$file" ]; then
+            echo "Checking $file..."
+            node -c "$file"
+          fi
+        done
+
+    - name: Check Docker build
+      run: |
+        echo "Testing Docker build..."
+        docker build -t veillebot-test .
+
+    - name: Cleanup test image
+      run: docker rmi veillebot-test || true

@@ -19,13 +19,13 @@ function createDiscordClient() {
 
     // Event handlers
     client.once('ready', () => {
-        console.log(`🚀 Bot connecté en tant que ${client.user.tag}`);
-        console.log(`📊 Connecté à ${client.guilds.cache.size} serveur(s)`);
-        console.log(`⚡ ${client.commands.size} commande(s) disponible(s)`);
+        console.log(`Bot connecté en tant que ${client.user.tag}`);
+        console.log(`Connecté à ${client.guilds.cache.size} serveur(s)`);
+        console.log(`${client.commands.size} commande(s) disponible(s)`);
     });
 
     client.on('error', error => {
-        console.error('❌ Erreur du client Discord:', error);
+        console.error('Erreur du client Discord:', error);
     });
 
     client.on('warn', warning => {

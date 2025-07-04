@@ -1,0 +1,55 @@
+name: Deploy to Production
+
+on:
+  workflow_run:
+    workflows: ["Build and Publish Docker Image"]
+    types:
+      - completed
+    branches: [main, master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Deploy to Render
+      run: |
+        echo "Triggering Render deployment..."
+        if [ -n "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+          echo "Render deployment triggered"
+        else
+          echo "RENDER_DEPLOY_HOOK not configured"
+        fi
+
+    - name: Health check
+      run: |
+        echo "Waiting for deployment to be ready..."
+        sleep 60
+        
+        if [ -n "${{ secrets.RENDER_APP_URL }}" ]; then
+          echo "Checking health endpoint..."
+          for i in {1..5}; do
+            if curl -f -s "${{ secrets.RENDER_APP_URL }}/health" > /dev/null; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 30s..."
+            sleep 30
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
+        else
+          echo "RENDER_APP_URL not configured, skipping health check"
+        fi
+
+    - name: Notify success
+      if: success()
+      run: |
+        echo "Deployment successful!"
+        echo "Docker image: nanandre/veillebot:latest"
+        echo "App URL: ${{ secrets.RENDER_APP_URL }}"

@@ -6,7 +6,7 @@ function keepAlive() {
     const PORT = process.env.PORT || 8080;
 
     app.get('/', (req, res) => {
-        res.send('🤖 Le bot Discord fonctionne correctement !');
+        res.send('Le bot Discord fonctionne correctement !');
     });
 
     app.get('/health', (req, res) => {
@@ -18,7 +18,7 @@ function keepAlive() {
     });
 
     const server = app.listen(PORT, () => {
-        console.log(`🟢 Keepalive actif sur le port ${PORT}`);
+        console.log(`Keepalive actif sur le port ${PORT}`);
     });
 
     return server;

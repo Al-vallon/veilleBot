@@ -1,133 +1,115 @@
-# VeilleBot 2.0 🤖
+# 🤖 VeilleBot - Bot Discord de Veille Technologique
 
-Bot Discord pour la veille technologique automatisée avec surveillance RSS.
+[![Docker Hub](https://img.shields.io/docker/pulls/nanandre/veillebot?style=flat-square&logo=docker)](https://hub.docker.com/r/nanandre/veillebot)
+[![Docker Image Size](https://img.shields.io/docker/image-size/nanandre/veillebot/latest?style=flat-square&logo=docker)](https://hub.docker.com/r/nanandre/veillebot)
 
-## � Configuration rapide
+Bot Discord automatisé pour surveiller 15 flux RSS et envoyer les nouvelles pertinentes selon des mots-clés configurés.
 
-### 1. Configuration Discord
-1. Allez sur https://discord.com/developers/applications
-2. Créez une nouvelle application ou sélectionnez une existante
-3. Dans l'onglet "Bot":
-   - Copiez le Token et remplacez `DISCORD_TOKEN` dans `config.json`
-   - Activez les intents suivants :
-     - ✅ **Presence Intent** (optionnel)
-     - ✅ **Server Members Intent** (optionnel)
-     - ❌ **Message Content Intent** (laissez désactivé sauf si nécessaire)
+## 🚀 Installation rapide
 
-### 2. Configuration des IDs Discord
-Dans `config.json`, remplacez :
-- `DISCORD_CLIENT_ID` : ID de votre application (onglet "General Information")
-- `DISCORD_GUILD_ID` : ID de votre serveur Discord (clic droit sur le serveur > Copier l'ID)
-- `DISCORD_CHANNEL_ID` : ID du canal où envoyer les news (clic droit sur le canal > Copier l'ID)
+### 🐳 Avec Docker (recommandé)
 
-### 3. Installation et démarrage
 ```bash
-npm install
-node deploy-commands.js  # Enregistre les commandes slash
-npm start               # Démarre le bot
+# Depuis Docker Hub (image publique)
+docker run -d --name veillebot --env-file .env -p 8080:8080 nanandre/veillebot:latest
+
+# Ou avec docker-compose
+curl -O https://raw.githubusercontent.com/nanandre/veillebot/main/docker-compose.prod.yml
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
-## �📁 Structure du projet
+### 💻 Installation locale
+
+1. **Configurez Discord** : Ajoutez vos tokens dans `.env`
+2. **Installez** : `npm install`
+3. **Déployez** : `node deploy-commands.js`
+4. **Démarrez** : `npm start`
+
+## ⚡ Commandes disponibles
+
+- `/veille` - Lance la veille manuellement
+- `/stats` - Affiche les statistiques du bot
+- `/reset-date` - Réinitialise la date de surveillance
+
+## 📁 Structure du projet
 
 ```
 veilleBot/
-├── src/                          # Code source modulaire
-│   ├── discordClient.js         # Gestion du client Discord
-│   ├── commandHandler.js        # Gestionnaire des commandes slash
-│   ├── newsManager.js           # Gestionnaire des flux RSS
-│   └── keepalive.js            # Serveur Express pour le monitoring
-├── commands/                    # Commandes slash Discord
-│   └── veille.js               # Commande de veille manuelle
-├── config/                     # Fichiers de configuration
-│   └── settings.json          # Paramètres de l'application
-├── bot-new.js                 # Point d'entrée principal (nouveau)
-├── feeds.json                 # Configuration des flux RSS
-├── package.json              # Dépendances Node.js
-├── .env                      # Variables d'environnement
-└── README.md                 # Documentation
+├── src/                 # Code source
+│   ├── discordClient.js # Client Discord
+│   ├── commandHandler.js# Gestionnaire de commandes
+│   ├── newsManager.js   # Gestionnaire RSS
+│   └── keepalive.js     # Serveur de monitoring
+├── commands/
+│   └── all-commands.js  # Toutes les commandes
+├── feeds.json           # Configuration des flux RSS
+├── config.json          # Configuration Discord
+├── .env                 # Variables d'environnement
+└── bot.js               # Point d'entrée
 ```
 
-## 🚀 Installation
+## 🎯 Fonctionnalités
 
-1. **Cloner le projet** (si nécessaire)
-2. **Installer les dépendances** :
-   ```bash
-   npm install
-   ```
+- ⏰ **Surveillance automatique** toutes les heures
+- 🔍 **Filtrage par mots-clés** pour chaque source
+- 📅 **Filtrage par date** (seulement les nouveaux articles)
+- 📰 **15 sources RSS** (Dev, IA, DevOps, Python, etc.)
+- 🚨 **Notifications Discord** automatiques
+- 📊 **Statistiques** et monitoring
 
-3. **Configurer l'environnement** :
-   - Copier `.env.exemple` vers `.env`
-   - Remplir les variables :
-     ```env
-     DISCORD_TOKEN=votre_token_discord
-     DISCORD_CHANNEL_ID=id_du_canal
-     PORT=8080
-     ```
+## 🔧 Configuration
 
-4. **Configurer les flux RSS** dans `feeds.json`
+Le bot ne notifie que les articles publiés après sa première installation, évitant ainsi les anciennes nouvelles.
 
-## 🔧 Utilisation
+### Variables d'environnement (.env)
 
-### Démarrage du bot
+```env
+DISCORD_TOKEN=votre_token_discord
+CLIENT_ID=votre_client_id
+GUILD_ID=votre_server_id (optionnel pour déploiement global)
+CHANNEL_ID=id_du_canal_de_veille
+```
+
+> **💡 Astuce** : Copiez `.env.example` vers `.env` et remplissez vos valeurs Discord.
+
+## 🐳 Docker
+
+### Images disponibles
+
+- **Docker Hub** : `nanandre/veillebot:latest`
+- **Build local** : `docker build -t veillebot .`
+
+### Scripts de développement
+
 ```bash
-# Nouvelle version organisée
-node bot-new.js
+# Tester l'environnement avant push
+bash test-ci.sh
 
-# Ancienne version (pour comparaison)
-node bot.js
+# Configurer les secrets GitHub (première fois)
+bash setup-tokens.sh
 ```
 
-### Fonctionnalités
+## 🚀 CI/CD Automatique
 
-- ✅ **Surveillance automatique** des flux RSS (toutes les heures)
-- ✅ **Filtrage par mots-clés** configurables
-- ✅ **Commandes slash Discord** pour interaction
-- ✅ **Serveur de monitoring** avec endpoints de santé
-- ✅ **Gestion d'erreurs** améliorée
-- ✅ **Logs détaillés** pour le débogage
+Le projet utilise GitHub Actions pour l'automatisation complète :
 
-### Endpoints de monitoring
+- **✅ Quality Check** : Vérification syntaxe + détection émojis
+- **🐳 Docker Build** : Construction et publication automatique  
+- **📦 Versioning** : Tags automatiques (latest, v1.0.0, etc.)
+- **🚀 Deploy** : Déploiement automatique sur Render
 
-- `GET /` - Status du bot
-- `GET /health` - Informations de santé détaillées
+### Configuration rapide
+1. Configurez les secrets GitHub (voir [CI-CD-GUIDE.md](CI-CD-GUIDE.md))
+2. Push votre code → Déploiement automatique !
 
-## 📝 Configuration des flux RSS
-
-Le fichier `feeds.json` contient la liste des flux à surveiller :
-
-```json
-[
-  {
-    "name": "TechCrunch",
-    "url": "https://techcrunch.com/feed/",
-    "keywords": ["AI", "blockchain", "startup"],
-    "category": "Tech"
-  }
-]
+```bash
+git add .
+git commit -m "feat: nouvelle fonctionnalité"  
+git push origin main
+# → Build + Deploy automatique ! 🎉
 ```
 
-## 🔧 Améliorations apportées
+Pour plus de détails : **[📖 Guide CI/CD complet](CI-CD-GUIDE.md)**
 
-### Structure modulaire
-- **Séparation des responsabilités** : chaque fichier a un rôle précis
-- **Réutilisabilité** : modules facilement testables
-- **Maintenabilité** : code plus facile à comprendre et modifier
-
-### Gestion d'erreurs
-- **Logs détaillés** avec émojis pour faciliter le débogage
-- **Gestion des promesses rejetées** non capturées
-- **Récupération gracieuse** en cas d'erreur sur un flux
-
-### Performance
-- **Évitement du rate limiting** Discord avec délais entre envois
-- **Vérification de l'existence** des fichiers avant lecture
-- **Optimisation** de la boucle de vérification des news
-
-## 🐛 Débogage
-
-Les logs incluent maintenant :
-- 🚀 Statut de connexion
-- 📂 Chargement des commandes
-- 🔍 Vérification des flux RSS
-- ✅ Envoi des articles
-- ❌ Erreurs détaillées
+---
+*Bot développé avec Discord.js v14 et RSS-Parser*
