@@ -1,7 +1,7 @@
 // deploy-commands.js
 require('dotenv').config();
 const { REST, Routes } = require('discord.js');
-const config = require('./config.json');
+const config = require('../config.json');
 const fs = require('fs');
 
 // Utiliser les variables d'environnement en priorité, puis config.json
@@ -15,10 +15,10 @@ console.log('   Guild ID:', guildId);
 console.log('   Token:', token ? 'OK Present' : 'ERREUR Manquant');
 
 const commands = [];
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('../commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-    const commandsModule = require(`./commands/${file}`);
+    const commandsModule = require(`../commands/${file}`);
     
     // Gérer le nouveau format (array de commandes)
     const commandsArray = Array.isArray(commandsModule) ? commandsModule : [commandsModule];

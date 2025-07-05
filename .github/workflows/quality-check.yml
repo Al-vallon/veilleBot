@@ -40,7 +40,7 @@ jobs:
     - name: Syntax check
       run: |
         echo "Checking JavaScript syntax..."
-        for file in bot.js deploy-commands.js src/*.js commands/*.js; do
+        for file in bot.js scripts/deploy-commands.js src/*.js commands/*.js; do
           if [ -f "$file" ]; then
             echo "Checking $file..."
             node -c "$file"

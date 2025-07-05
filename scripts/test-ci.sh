@@ -10,7 +10,7 @@ echo ""
 
 # 1. Test de syntaxe JavaScript
 echo "🔍 1. Vérification syntaxe JavaScript..."
-for file in bot.js deploy-commands.js src/*.js commands/*.js; do
+for file in bot.js scripts/deploy-commands.js src/*.js commands/*.js; do
   if [ -f "$file" ]; then
     echo "   Checking $file..."
     node -c "$file"
