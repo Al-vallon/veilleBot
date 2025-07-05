@@ -28,25 +28,31 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
         echo "Checking Docker Hub configuration..."
+        echo "Available secrets (debug):"
+        echo "DOCKER_USERNAME length: ${#DOCKER_USERNAME}"
+        echo "DOCKER_PASSWORD length: ${#DOCKER_PASSWORD}"
+        
         if [ -z "$DOCKER_USERNAME" ]; then
-          echo "❌ DOCKER_USERNAME secret is missing"
-          echo "→ Add DOCKER_USERNAME in GitHub repository secrets"
+          echo "DOCKER_USERNAME secret is missing or empty"
+          echo "→ Go to: https://github.com/${{ github.repository }}/settings/secrets/actions"
+          echo "→ Add secret named exactly: DOCKER_USERNAME"
+          echo "→ Value should be: nanandre"
           exit 1
         else
-          echo "✅ DOCKER_USERNAME is configured: $DOCKER_USERNAME"
+          echo " DOCKER_USERNAME is configured: $DOCKER_USERNAME"
         fi
         
         if [ -z "$DOCKER_PASSWORD" ]; then
-          echo "❌ DOCKER_PASSWORD secret is missing" 
+          echo " DOCKER_PASSWORD secret is missing or empty" 
           echo "→ Add DOCKER_PASSWORD in GitHub repository secrets"
           echo "→ Use a Docker Hub access token, not your password"
           exit 1
         else
-          echo "✅ DOCKER_PASSWORD is configured (token format check...)"
+          echo " DOCKER_PASSWORD is configured (token format check...)"
           if [[ $DOCKER_PASSWORD == dckr_pat_* ]]; then
-            echo "✅ Token format is correct"
+            echo " Token format is correct"
           else
-            echo "⚠️ Token doesn't start with 'dckr_pat_' - verify it's an access token"
+            echo " Token doesn't start with 'dckr_pat_' - verify it's an access token"
           fi
         fi
         
