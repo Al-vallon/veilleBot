@@ -12,7 +12,7 @@ const token = process.env.DISCORD_TOKEN || config.token;
 console.log('Configuration détectée:');
 console.log('   Client ID:', clientId);
 console.log('   Guild ID:', guildId);
-console.log('   Token:', token ? '✅ Présent' : '❌ Manquant');
+console.log('   Token:', token ? 'OK Present' : 'ERREUR Manquant');
 
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -39,16 +39,16 @@ const rest = new REST({ version: '10' }).setToken(token);
         // Essayer d'abord les commandes globales (prennent 1h à apparaître)
         console.log('Tentative d\'enregistrement global...');
         await rest.put(Routes.applicationCommands(clientId), { body: commands });
-        console.log('✅ Commandes globales enregistrées avec succès !');
+        console.log('SUCCESS: Commandes globales enregistrées avec succès !');
         console.log('⏰ Les commandes apparaîtront dans ~1 heure');
         
     } catch (globalError) {
-        console.log('❌ Échec global, tentative sur le serveur...');
+        console.log('ERREUR: Échec global, tentative sur le serveur...');
         try {
             await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands });
-            console.log('✅ Commandes serveur enregistrées avec succès !');
+            console.log('SUCCESS: Commandes serveur enregistrées avec succès !');
         } catch (guildError) {
-            console.error('❌ Erreur lors de l\'enregistrement des commandes:');
+            console.error('ERREUR: Erreur lors de l\'enregistrement des commandes:');
             console.error('Global:', globalError.message);
             console.error('Guild:', guildError.message);
             console.log('\nAssurez-vous que votre bot est invité avec cette URL:');

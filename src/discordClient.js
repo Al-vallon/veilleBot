@@ -29,7 +29,7 @@ function createDiscordClient() {
     });
 
     client.on('warn', warning => {
-        console.warn('⚠️ Avertissement Discord:', warning);
+        console.warn('ATTENTION: Avertissement Discord:', warning);
     });
 
     return client;

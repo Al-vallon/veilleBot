@@ -9,7 +9,7 @@ function loadCommands(client) {
     
     // Vérifier si le dossier commands existe
     if (!fs.existsSync(commandsPath)) {
-        console.log('⚠️ Le dossier commands n\'existe pas encore');
+        console.log('ATTENTION: Le dossier commands n\'existe pas encore');
         return;
     }
 
@@ -29,7 +29,7 @@ function loadCommands(client) {
                     client.commands.set(command.data.name, command);
                     console.log(`Commande "${command.data.name}" chargée`);
                 } else {
-                    console.log(`⚠️ Une commande dans "${file}" n'a pas la structure requise`);
+                    console.log(`ATTENTION: Une commande dans "${file}" n'a pas la structure requise`);
                 }
             }
         } catch (error) {

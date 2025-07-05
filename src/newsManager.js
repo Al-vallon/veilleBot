@@ -22,7 +22,7 @@ class NewsManager {
                 }
             }
         } catch (error) {
-            console.warn('⚠️ Erreur lors de la lecture de la config:', error.message);
+            console.warn('ATTENTION: Erreur lors de la lecture de la config:', error.message);
         }
 
         // Créer une nouvelle date de démarrage
@@ -31,7 +31,7 @@ class NewsManager {
         
         try {
             fs.writeFileSync(this.configPath, JSON.stringify(config, null, 2));
-            console.log(`🆕 Première installation détectée - Date de démarrage: ${now.toLocaleString('fr-FR')}`);
+            console.log(`NOUVELLE INSTALLATION: Première installation détectée - Date de démarrage: ${now.toLocaleString('fr-FR')}`);
             console.log(`Seuls les articles publiés après cette date seront notifiés`);
         } catch (error) {
             console.error('Erreur lors de la sauvegarde de la config:', error.message);
@@ -46,7 +46,7 @@ class NewsManager {
                 this.feeds = JSON.parse(fs.readFileSync(this.feedsPath, "utf-8"));
                 console.log(`${this.feeds.length} flux RSS chargé(s)`);
             } else {
-                console.warn('⚠️ Fichier feeds.json introuvable');
+                console.warn('ATTENTION: Fichier feeds.json introuvable');
                 this.feeds = [];
             }
         } catch (error) {
@@ -73,12 +73,12 @@ class NewsManager {
             const isRecent = articleDate >= this.startupDate;
             
             if (!isRecent) {
-                console.log(`⏭️ Article ignoré (trop ancien): ${item.title?.substring(0, 50)}... (${articleDate.toLocaleDateString('fr-FR')})`);
+                console.log(`IGNORE: Article ignoré (trop ancien): ${item.title?.substring(0, 50)}... (${articleDate.toLocaleDateString('fr-FR')})`);
             }
             
             return isRecent;
         } catch (error) {
-            console.warn(`⚠️ Date invalide pour l'article: ${item.title?.substring(0, 50)}...`);
+            console.warn(`ATTENTION: Date invalide pour l'article: ${item.title?.substring(0, 50)}...`);
             return true; // En cas d'erreur, on garde l'article
         }
     }
