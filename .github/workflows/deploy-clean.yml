@@ -1,0 +1,70 @@
+name: Deploy to Production
+
+on:
+  workflow_run:
+    workflows: ["Build and Publish Docker Image"]
+    types:
+      - completed
+    branches: [main, master]
+  # Permettre le déclenchement manuel pour debug
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Debug workflow information
+      run: |
+        echo "Workflow event: ${{ github.event_name }}"
+        echo "Previous workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+        echo "Branch: ${{ github.ref }}"
+        echo "Commit: ${{ github.sha }}"
+
+    - name: Deploy to Render
+      env:
+        RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      run: |
+        echo "Checking Render configuration..."
+        
+        if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+          echo "Triggering Render deployment..."
+          curl -X POST "$RENDER_DEPLOY_HOOK"
+          echo "Render deployment triggered successfully"
+        else
+          echo "RENDER_DEPLOY_HOOK not configured - skipping Render deployment"
+          echo "The Docker image is still available on Docker Hub: nanandre/veillebot:latest"
+        fi
+
+    - name: Health check
+      env:
+        RENDER_APP_URL: ${{ secrets.RENDER_APP_URL }}
+      run: |
+        if [ -n "$RENDER_APP_URL" ]; then
+          echo "Waiting for deployment to be ready..."
+          sleep 60
+          
+          echo "Checking health endpoint..."
+          for i in {1..5}; do
+            if curl -f -s "$RENDER_APP_URL/health" > /dev/null; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 30s..."
+            sleep 30
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
+        else
+          echo "RENDER_APP_URL not configured - skipping health check"
+        fi
+
+    - name: Notify success
+      run: |
+        echo "Deployment workflow completed!"
+        echo "Docker image: nanandre/veillebot:latest"
+        echo "Image available at: https://hub.docker.com/r/nanandre/veillebot"
