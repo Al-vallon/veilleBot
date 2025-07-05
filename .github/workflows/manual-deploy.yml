@@ -1,0 +1,52 @@
+name: Manual Deploy Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_to_render:
+        description: 'Deploy to Render?'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+        - 'true'
+        - 'false'
+
+jobs:
+  test-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Test Docker Hub availability
+      run: |
+        echo "Testing Docker Hub connectivity..."
+        docker pull nanandre/veillebot:latest
+        echo "Docker image pulled successfully!"
+        
+    - name: Deploy to Render (if requested)
+      if: ${{ github.event.inputs.deploy_to_render == 'true' }}
+      env:
+        RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      run: |
+        if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+          echo "Deploying to Render..."
+          curl -X POST "$RENDER_DEPLOY_HOOK"
+          echo "Render deployment triggered!"
+        else
+          echo "RENDER_DEPLOY_HOOK not configured"
+          exit 1
+        fi
+        
+    - name: Summary
+      run: |
+        echo "=== Deployment Summary ==="
+        echo "✅ Docker image: nanandre/veillebot:latest"
+        echo "✅ Available on Docker Hub"
+        if [ "${{ github.event.inputs.deploy_to_render }}" = "true" ]; then
+          echo "✅ Render deployment triggered"
+        else
+          echo "⏭️ Render deployment skipped"
+        fi
