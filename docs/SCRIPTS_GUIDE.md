@@ -1,14 +1,40 @@
 # Scripts de Développement VeilleBot
 
+## 📁 Organisation des scripts
+
+Tous les scripts sont maintenant organisés dans le dossier `scripts/` :
+
+```
+scripts/
+├── deploy-commands.js      # 🚀 Déploiement commandes Discord
+├── setup-tokens.sh         # 🔧 Configuration interactive
+├── test-ci.sh              # 🧪 Tests qualité code
+├── check-deployment.sh     # 📊 Vérification déploiement
+└── README.md               # 📖 Documentation scripts
+```
+
 ## Scripts disponibles
 
-Après nettoyage et mise en place de la CI/CD, seuls 2 scripts bash sont conservés :
+### 🚀 `scripts/deploy-commands.js` - Déploiement commandes Discord
+**Utilité** : Déploie les commandes slash sur Discord
 
-### 🧪 `test-ci.sh` - Test local avant push
+```bash
+node scripts/deploy-commands.js
+```
+
+**Ce qu'il fait :**
+- ✅ Enregistre les commandes slash globalement ou sur un serveur
+- ✅ Détection automatique des commandes disponibles
+- ✅ Gestion des erreurs avec fallback serveur
+- ✅ Configuration via variables d'environnement
+
+**Quand l'utiliser :** Après modification des commandes ou nouveau déploiement.
+
+### 🧪 `scripts/test-ci.sh` - Test local avant push
 **Utilité** : Tester localement avant de pusher pour éviter les échecs CI/CD
 
 ```bash
-./test-ci.sh
+bash scripts/test-ci.sh
 ```
 
 **Ce qu'il fait :**
@@ -20,11 +46,26 @@ Après nettoyage et mise en place de la CI/CD, seuls 2 scripts bash sont conserv
 
 **Quand l'utiliser :** Avant chaque `git push` pour valider le code.
 
-### ⚙️ `setup-tokens.sh` - Configuration interactive
+### 📊 `scripts/check-deployment.sh` - Vérification déploiement
+**Utilité** : Vérifie l'état du déploiement et la santé du bot
+
+```bash
+bash scripts/check-deployment.sh
+```
+
+**Ce qu'il fait :**
+- ✅ Vérification de l'état des services
+- 📊 Contrôle de santé du bot
+- 🐳 Validation du déploiement Docker
+- 📝 Rapport d'état détaillé
+
+**Quand l'utiliser :** Après un déploiement pour vérifier que tout fonctionne.
+
+### ⚙️ `scripts/setup-tokens.sh` - Configuration interactive
 **Utilité** : Guide pour configurer les secrets GitHub Actions
 
 ```bash
-./setup-tokens.sh
+bash scripts/setup-tokens.sh
 ```
 
 **Ce qu'il fait :**
@@ -41,14 +82,26 @@ Après nettoyage et mise en place de la CI/CD, seuls 2 scripts bash sont conserv
 ## Workflow recommandé
 
 ```bash
-# 1. Développement local
+# 1. Première configuration
+bash scripts/setup-tokens.sh
+
+# 2. Déploiement des commandes Discord
+node scripts/deploy-commands.js
+
+# 3. Développement local
 # ... coder ...
 
-# 2. Test avant push  
-./test-ci.sh
+# 4. Test avant push  
+bash scripts/test-ci.sh
 
-# 3. Push si tests OK
+# 5. Push si tests OK
 git add .
+git commit -m "..."
+git push
+
+# 6. Vérification post-déploiement
+bash scripts/check-deployment.sh
+```
 git commit -m "feat: nouvelle fonctionnalité"
 git push origin main
 
